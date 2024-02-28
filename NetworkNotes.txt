@@ -1,0 +1,46 @@
+﻿// Send position of p1 to the server
+if (server)
+{
+        // Get the position of p1
+        sf::Vector2f p1Position = p1.getShape().getPosition();
+    
+        // Create an ENet packet to send the position data
+        ENetPacket* packet = enet_packet_create(&p1Position, sizeof(sf::Vector2f), ENET_PACKET_FLAG_RELIABLE);
+    
+        // Send the packet to the server
+        enet_peer_send(server, 0, packet);
+}
+
+
+* This part of the code checks if server is not NULL (i.e., a server connection exists).
+* It retrieves the position of object p1.
+* Creates an ENet packet containing the position data (p1Position) with a specified size and reliability flag.
+* Sends the packet to the server using enet_peer_send.
+* peer: This parameter is a pointer to the peer to which the packet should be sent. In the context of the code snippet, server is likely a pointer to an ENetPeer representing the server to which the client wants to send data.
+* channelID: This parameter specifies the channel through which the packet should be sent. ENet allows for multiple channels of communication, each with its own reliability settings and ordering guarantees. In this case, the channel ID is set to 0, indicating the default channel.
+* packet: This parameter is a pointer to the ENet packet that contains the data to be sent. ENet packets can contain arbitrary data and can be created using enet_packet_create
+
+
+if (netEvent.type == ENET_EVENT_TYPE_RECEIVE)
+{
+        // Process received data from the server
+        // You need to implement this part based on your game's networking protocol
+    
+        // Receive position of p2 from the server
+        if (netEvent.packet->dataLength == sizeof(sf::Vector2f))
+        {
+            // Extract position data from the received packet
+            sf::Vector2f p2Position;
+            memcpy(&p2Position, netEvent.packet->data, sizeof(sf::Vector2f));
+            
+            // Set the position of object p2 to the received position
+            p2.setPosition(p2Position);
+        }
+}
+
+
+* This part checks if there's a network event of type ENET_EVENT_TYPE_RECEIVE.
+* It verifies if the received packet contains data of the expected size (the size of sf::Vector2f).
+* Copies the position data from the received packet into a local variable p2Position.
+* Sets the position of object p2 to the received position data.
+In summary, the first part sends the position of p1 to the server, and the second part receives the position of p2 from the server and updates its position accordingly. This code snippet forms the basic structure of client-server communication for exchanging position data between two objects in a networked game environment.
